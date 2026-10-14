@@ -51,12 +51,13 @@ pnpm dev
 ```
 
 Open the HTTP address printed by Vite, normally `http://127.0.0.1:5173/`.
-The `example/index.html` file is a source entry that needs the development
+The `examples/react/index.html` file is a source entry that needs the development
 server to compile and serve the React application.
 
 The local example has independent profile and activity requests, refresh and
 error controls, longer content, a right-to-left layout toggle and quality reports.
-All example data and requests are simulated.
+All example data and requests are simulated. Each stack has its own folder in
+[examples/](examples/README.md).
 
 To install the built package in another project:
 
@@ -210,8 +211,8 @@ once for web adapters; native and Flutter adapters do not use it.
 | Next.js 16.4 App Router | `react-loading-regions/next` | Production build, server/client boundaries, SSR, hydration and browser interactions | Other Next.js versions and routers are unverified |
 | Vue 3.5 | `react-loading-regions/vue` | Slots, SSR, transitions, production build and browser interactions | Nuxt integration is unverified |
 | Svelte 5 | `react-loading-regions/svelte` | Snippets, transitions, declarations, production build and browser interactions | SvelteKit route integration is unverified; Svelte 4 is unsupported |
-| React Native 0.86 / Expo SDK 57 | `react-loading-regions/native` | Native component tests, public measurement callbacks, iOS and Android Metro/Hermes exports | Preview: no simulator, device or screen-reader run |
-| Flutter | Dart package in `packages/flutter` | Flutter 3.44.2 / Dart 3.12.2 analysis, engine-backed widget layout tests, example workflow and web compilation | Preview: no phone/device run or screen-reader audit |
+| React Native 0.86.3 / Expo SDK 57 | `react-loading-regions/native` | Component tests, Metro exports and Expo Go simulator flows on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
+| Flutter | Dart package in `packages/flutter` | Flutter 3.44.2 / Dart 3.12.2, widget/web checks and native integration on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
 
 ### Next.js
 
@@ -393,9 +394,9 @@ uninvoked while pending, and refreshes retain the child element. Skeletons
 exclude focus, semantics and pointer input. Like native skeletons, they are static.
 Only registered geometry is checked, and geometry reports do not audit semantics.
 
-Run `cd packages/flutter/example`, `flutter pub get`, then
-`flutter run -d chrome`. The example includes a web host; its README explains
-adding iOS and Android hosts. See the
+Run `cd examples/flutter`, `flutter pub get`, then
+`flutter run -d <device-id>`. The example includes iOS, Android and web hosts;
+its [README](examples/flutter/README.md) describes simulator checks. See the
 [Flutter package README](packages/flutter/README.md),
 [RenderBox API](https://api.flutter.dev/flutter/rendering/RenderBox/localToGlobal.html)
 and [frame callbacks](https://api.flutter.dev/flutter/widgets/WidgetsBinding/addPostFrameCallback.html).
@@ -422,12 +423,19 @@ local errors and retry. Next.js produced no hydration warnings. A shared web
 margin-containment fix was verified in these examples. DOM unit tests use jsdom
 and cannot prove browser geometry on their own.
 
-Native test-renderer checks mock host measurement; Metro exports prove bundle
-compatibility, not device behaviour. Flutter widget tests exercise Flutter's
-layout engine, and its example compiles for the web. Native/Flutter device
-measurement, VoiceOver, TalkBack, responsive layouts and broad visual audits
-remain unverified. The native and Flutter adapters are previews until those
-checks are completed.
+Expo Go 57.0.9 and Flutter 3.44.2 were also tested on an iPhone 17 Pro simulator
+running iOS 26.5 and an Android 15 / API 35 emulator. Both adapters captured a
+registered box at `8,8` with size `160×32`, reported matching loading/loaded
+geometry, retained profile edits during refresh, kept errors and retries within
+the activity region, and rejected unavailable measurements. Expo uses a
+[Maestro flow](examples/expo/.maestro/native.yaml); Flutter uses a real-engine
+[integration test](examples/flutter/integration_test/native_test.dart) that also
+asserts retained input element identity.
+
+Native test-renderer checks mock host measurement, and Metro exports only prove
+bundle compatibility. The simulator checks above exercise native measurement.
+Hardware devices, VoiceOver, TalkBack, responsive layouts and broad visual
+audits remain unverified, so the native and Flutter adapters remain previews.
 
 Named providers remain part of the React API. Other adapters receive direct
 resources, with `combineResources` available to JavaScript consumers. There is

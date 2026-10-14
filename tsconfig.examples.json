@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["examples/expo/App.tsx", "examples/vue/main.ts"],
+  "include": [
+    "examples/expo/App.tsx",
+    "examples/vue/main.ts",
+    "examples/react"
+  ],
   "exclude": []
 }

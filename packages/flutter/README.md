@@ -26,10 +26,13 @@ compare geometry and do not certify accessibility.
 
 Run `flutter pub get`, `flutter analyze`, and `flutter test --concurrency=2` from
 this folder within a full checkout. Shared JSON test fixtures live in
-`../../tests/fixtures`. The runnable example is in `example/` and has its own
-widget workflow test. Its web host compiles with `flutter build web`.
+`../../tests/fixtures`. The runnable example is in [`../../examples/flutter`](../../examples/flutter)
+and includes iOS, Android and web hosts, widget checks and a native integration test.
+Its web host compiles with `flutter build web`.
 
-Verified with Flutter 3.44.2 / Dart 3.12.2 using widget layout tests and web
-compilation. Phone measurements and screen readers have not been tested, so
-this adapter is a preview. MIT licence and preserved attribution are in
+Verified with Flutter 3.44.2 / Dart 3.12.2 using widget tests, web compilation
+and native integration tests on iOS 26.5 and Android 15 simulators. The native
+checks cover measured bounds, matching layouts, retained input identity and
+edits, local errors/retries and unavailable geometry rejection. Hardware devices
+and screen readers remain untested, so this adapter is a preview. MIT licence and preserved attribution are in
 `LICENSE` and `THIRD_PARTY_NOTICES.md`.

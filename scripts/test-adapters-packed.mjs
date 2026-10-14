@@ -41,7 +41,7 @@ await renderToString(createSSRApp({render: () => h(LoadingRegion, {resource:pend
   run('pnpm', ['exec', 'vite', 'build']);
   assert.match(await readFile(join(scratch, 'dist/index.html'), 'utf8'), /assets/);
   console.log('Packed Svelte consumer declarations and production build passed without React installed.');
-  await install({ react: '19.2.3', 'react-native': '0.86.0', '@types/react': '^19.2.0', typescript: '^5.9.3' });
+  await install({ react: '19.2.3', 'react-native': '0.86.3', '@types/react': '^19.2.0', typescript: '^5.9.3' });
   await writeFile(join(scratch, 'native.tsx'), `import { Text } from 'react-native';
 import { LoadingRegion, Geometry, ready, captureNativeLayout } from 'react-loading-regions/native';
 export const region = <LoadingRegion resource={ready('Alex')} onReport={report => console.log(report.passed)}>{name => <Geometry boneKey="name"><Text>{name}</Text></Geometry>}</LoadingRegion>;

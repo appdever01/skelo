@@ -41,11 +41,11 @@ jobs:
         working-directory: packages/flutter
       - run: ../../.local/flutter-sdk/bin/flutter test --concurrency=2
         working-directory: packages/flutter
-      - run: ../../../.local/flutter-sdk/bin/flutter pub get
-        working-directory: packages/flutter/example
-      - run: ../../../.local/flutter-sdk/bin/flutter analyze
-        working-directory: packages/flutter/example
-      - run: ../../../.local/flutter-sdk/bin/flutter test --concurrency=2
-        working-directory: packages/flutter/example
-      - run: ../../../.local/flutter-sdk/bin/flutter build web
-        working-directory: packages/flutter/example
+      - run: ../../.local/flutter-sdk/bin/flutter pub get
+        working-directory: examples/flutter
+      - run: ../../.local/flutter-sdk/bin/flutter analyze
+        working-directory: examples/flutter
+      - run: ../../.local/flutter-sdk/bin/flutter test --concurrency=2
+        working-directory: examples/flutter
+      - run: ../../.local/flutter-sdk/bin/flutter build web
+        working-directory: examples/flutter

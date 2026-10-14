@@ -1,0 +1,52 @@
+appId: ${APP_ID}
+---
+- stopApp
+- openLink: ${EXPO_URL}
+- tapOn:
+    text: Open
+    optional: true
+- tapOn:
+    text: Continue
+    optional: true
+- tapOn:
+    text: Close
+    optional: true
+- extendedWaitUntil:
+    visible: Skelo in Expo
+    timeout: 60000
+- assertVisible: "Profile: ready"
+- assertVisible: "Activity: pending"
+- assertNotVisible: Activity ready
+- assertVisible: Native measurement ready
+- assertVisible: "8,8 160x32"
+- tapOn:
+    id: profile-input
+- eraseText: 4
+- inputText: Edited profile
+- hideKeyboard
+- tapOn: "(?i)Load activity"
+- assertVisible: "Activity: ready"
+- assertVisible: Layout passed
+- assertVisible: "1 loading / 1 loaded; drift 0.0"
+- tapOn: "(?i)Refresh profile"
+- assertVisible: "Profile: refreshing"
+- assertVisible: Edited profile
+- assertVisible: Activity ready
+- tapOn: "(?i)Finish refresh"
+- assertVisible: "Profile: ready"
+- assertVisible: Edited profile
+- tapOn: "(?i)Fail activity"
+- assertVisible: "Activity: error"
+- assertVisible: Could not load this content
+- assertVisible: Edited profile
+- tapOn: Try again
+- assertVisible: "Activity: ready"
+- assertVisible: Activity ready
+- assertVisible: Edited profile
+- scrollUntilVisible:
+    element: "(?i)Check unavailable measurement"
+    direction: DOWN
+- tapOn: "(?i)Check unavailable measurement"
+- assertVisible: Unavailable measurement rejected
+- assertVisible: Native measurement ready
+- takeScreenshot: native-workflow

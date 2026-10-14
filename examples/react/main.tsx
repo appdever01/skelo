@@ -1,9 +1,9 @@
 import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { LoadingRegion, pending, ready, refreshing, failed, hasData, type Resource } from '../src';
-import { QualityBoundary } from '../src/quality/react';
-import type { QualityReport } from '../src/quality';
-import '../src/styles.css';
+import { LoadingRegion, pending, ready, refreshing, failed, hasData, type Resource } from 'react-loading-regions';
+import { QualityBoundary } from 'react-loading-regions/quality/react';
+import type { QualityReport } from 'react-loading-regions/quality';
+import 'react-loading-regions/styles.css';
 import './style.css';
 
 type IdentityData = { name: string; bio: string };
