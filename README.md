@@ -6,6 +6,37 @@ with the content that arrives.
 This is the first working version. It supports React 18.3 and 19. The package
 has not been published to npm yet.
 
+## The problem
+
+A profile card and an activity feed can finish loading at different times.
+With one loading flag for the whole page, a slow feed can keep a finished
+profile hidden. Switching that flag back on during a refresh can also replace
+content someone is already using.
+
+Skeletons have a separate problem: the placeholder can look right while the
+loaded content is taller, wider or positioned differently. Generating shapes
+alone does not tell you how well they match the result.
+
+## Why Skelo is different
+
+[auto-skeleton-react](https://github.com/ShanukJ/auto-skeleton),
+[@auto-skeleton/react](https://github.com/riazzahmedm/react-auto-skeleton) and
+[react-auto-skeleton-loader](https://github.com/mirzaibtisam41/react-auto-skeleton-loader)
+document loading wrappers driven by a boolean. Skelo combines explicit resource
+states with a check of each region's loading and loaded layouts.
+
+- Each region declares the data it needs. A profile can become usable while
+  the activity feed still shows its skeleton.
+- Refreshing keeps existing content mounted. If a refresh fails and the
+  resource retains its data, the region shows the error alongside that content.
+  Errors and retry controls stay with the affected region.
+- The quality checker reports differences in position, size and shape, along
+  with overflow and missing elements. Incomplete or unmeasured captures cannot
+  pass. Reports are available through React or a JSON command-line check.
+- Real pending children stay unmounted during scanning. You can supply an
+  inert template or saved geometry instead. Templates must be free of side
+  effects; saved geometry can also provide a skeleton during server rendering.
+
 ## Try it
 
 Use Node 22.13 or newer and pnpm 11.7:
