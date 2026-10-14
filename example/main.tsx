@@ -63,7 +63,7 @@ function Playground() {
     setActivity(failed('Simulated request failure'));
   }
   return <main>
-    <header><a className="wordmark" href="https://github.com/appdever01/react-loading-regions">react-loading-regions</a><span className="version">0.1.0</span></header>
+    <header><a className="wordmark" href="https://github.com/appdever01/skelo">Skelo</a><span className="version">0.1.0</span></header>
     <h1>Load each part.<br />Check what moves.</h1>
     <div className="workspace">
       <section aria-labelledby="preview-heading">
@@ -101,7 +101,7 @@ function Playground() {
       </li>)}</ul> : <p>Load a region to compare its skeleton with the content that arrives.</p>}
       <p className="demo-note">These are local geometry checks. They do not measure Core Web Vitals or certify accessibility.</p>
     </section>
-    <footer><a href="https://github.com/appdever01/react-loading-regions#readme">Usage and API</a><span>MIT · React 18 and 19</span></footer>
+    <footer><a href="https://github.com/appdever01/skelo#readme">Usage and API</a><span>MIT · React 18 and 19</span></footer>
   </main>;
 }
 

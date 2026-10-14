@@ -7,11 +7,11 @@
   "author": "Naheem Adisa",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/appdever01/react-loading-regions.git"
+    "url": "git+https://github.com/appdever01/skelo.git"
   },
-  "homepage": "https://github.com/appdever01/react-loading-regions#readme",
+  "homepage": "https://github.com/appdever01/skelo#readme",
   "bugs": {
-    "url": "https://github.com/appdever01/react-loading-regions/issues"
+    "url": "https://github.com/appdever01/skelo/issues"
   },
   "keywords": [
     "react",

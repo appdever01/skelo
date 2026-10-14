@@ -1,4 +1,4 @@
-# react-loading-regions
+# Skelo
 
 Load independent parts of a React page and check how their skeletons compare
 with the content that arrives.
@@ -11,11 +11,15 @@ has not been published to npm yet.
 Use Node 22.13 or newer and pnpm 11.7:
 
 ```sh
-git clone https://github.com/appdever01/react-loading-regions.git
-cd react-loading-regions
+git clone https://github.com/appdever01/skelo.git
+cd skelo
 pnpm install --frozen-lockfile
 pnpm dev
 ```
+
+Open the HTTP address printed by Vite, normally `http://127.0.0.1:5173/`.
+The `example/index.html` file is a source entry that needs the development
+server to compile and serve the React application.
 
 The local example has independent profile and activity requests, refresh and
 error controls, longer content, a right-to-left layout toggle and quality reports.
@@ -164,9 +168,13 @@ pnpm smoke:packed
 Tests cover resource adapters, independent regions, refresh continuity,
 region errors, SSR, scan budgets, observer lifecycle and quality failures.
 DOM tests use jsdom and supplied geometry. They do not prove browser layout,
-actual tab navigation or visual fidelity. No browser tests have been run for
-this initial version. The example is built, but its rendered appearance remains
-unverified.
+actual tab navigation or visual fidelity. Separate local browser smoke checks
+covered the example rendering, independent profile/activity loading, refresh
+continuity, an activity error and retry, one keyboard Tab transition and the
+normal layout reports at a desktop viewport. Both example regions were within
+the default 8px tolerance, and no console errors were observed.
+Responsive layouts, screen-reader behaviour and broader visual comparisons
+remain unverified.
 
 Packed-package smoke checks install the tarball in temporary React 18 and 19
 projects and check ESM/CommonJS imports, declarations, SSR, styles and CLI exit
