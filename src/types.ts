@@ -23,7 +23,7 @@ export interface LayoutSnapshot {
   visited: number;
   durationMs: number;
   complete: boolean;
-  reason?: 'max-depth' | 'max-elements' | 'max-time';
+  reason?: 'max-depth' | 'max-elements' | 'max-time' | 'measurement-unavailable';
 }
 
 export interface ScanOptions {

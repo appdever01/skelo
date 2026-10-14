@@ -1,4 +1,5 @@
 .lr-skeleton { position: relative; width: 100%; isolation: isolate; overflow: hidden; }
+[data-loading-content], .lr-template { display: flow-root; }
 .lr-template { opacity: 0; pointer-events: none; user-select: none; }
 .lr-overlay { position: absolute; inset: 0; pointer-events: none; }
 .lr-bone { display: block; position: absolute; background: var(--lr-base, #dde1e5); overflow: hidden; }

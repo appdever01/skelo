@@ -1,0 +1,416 @@
+[
+  {
+    "name": "match",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": true,
+    "comparable": true,
+    "codes": []
+  },
+  {
+    "name": "drift",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 30,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": true,
+    "codes": [
+      "BONE_DRIFT"
+    ]
+  },
+  {
+    "name": "partial",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": false,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ],
+      "reason": "measurement-unavailable"
+    },
+    "passed": false,
+    "comparable": false,
+    "codes": [
+      "INCOMPLETE_CAPTURE"
+    ]
+  },
+  {
+    "name": "width",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 300,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": false,
+    "codes": [
+      "WIDTH_CHANGED"
+    ]
+  },
+  {
+    "name": "height",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 100,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": true,
+    "codes": [
+      "CONTAINER_DRIFT"
+    ]
+  },
+  {
+    "name": "missing",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "other",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": true,
+    "codes": [
+      "MISSING_BONE",
+      "UNEXPECTED_BONE"
+    ]
+  },
+  {
+    "name": "duplicate",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        },
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": false,
+    "codes": [
+      "DUPLICATE_KEY"
+    ]
+  },
+  {
+    "name": "overflow",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 190,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "passed": false,
+    "comparable": true,
+    "codes": [
+      "OVERFLOW",
+      "BONE_DRIFT"
+    ]
+  },
+  {
+    "name": "empty",
+    "expected": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": [
+        {
+          "key": "name",
+          "x": 8,
+          "y": 8,
+          "width": 100,
+          "height": 20,
+          "radius": 4,
+          "kind": "rect"
+        }
+      ]
+    },
+    "actual": {
+      "version": 1,
+      "width": 200,
+      "height": 80,
+      "complete": true,
+      "visited": 1,
+      "durationMs": 0,
+      "bones": []
+    },
+    "passed": false,
+    "comparable": false,
+    "codes": [
+      "NO_GEOMETRY"
+    ]
+  }
+]

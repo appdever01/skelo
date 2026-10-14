@@ -1,0 +1,1 @@
+{"name":"skelo-expo-example","private":true,"main":"index.js","scripts":{"start":"expo start","export":"expo export --platform ios --platform android --output-dir ../../.local/expo-export --max-workers 2"},"dependencies":{"react-loading-regions":"workspace:*","expo":"57.0.28","react":"19.2.3","react-native":"0.86.0"}}

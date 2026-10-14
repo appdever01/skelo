@@ -1,7 +1,7 @@
 {
   "name": "react-loading-regions",
-  "version": "0.1.0",
-  "description": "Independent React loading regions, automatic skeletons and a layout quality checker.",
+  "version": "0.2.0",
+  "description": "Independent loading regions, skeletons and layout checks for React, Next.js, React Native, Vue and Svelte.",
   "type": "module",
   "license": "MIT",
   "author": "Naheem Adisa",
@@ -19,7 +19,12 @@
     "partial-loading",
     "loading",
     "accessibility",
-    "layout"
+    "layout",
+    "vue",
+    "svelte",
+    "react-native",
+    "nextjs",
+    "expo"
   ],
   "engines": {
     "node": ">=20"
@@ -60,7 +65,52 @@
       }
     },
     "./styles.css": "./dist/styles.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./core": {
+      "import": {
+        "types": "./dist/core/index.d.ts",
+        "default": "./dist/core/index.js"
+      },
+      "require": {
+        "types": "./dist/core/index.d.cts",
+        "default": "./dist/core/index.cjs"
+      }
+    },
+    "./next": {
+      "import": {
+        "types": "./dist/next.d.ts",
+        "default": "./dist/next.js"
+      },
+      "require": {
+        "types": "./dist/next.d.cts",
+        "default": "./dist/next.cjs"
+      }
+    },
+    "./native": {
+      "import": {
+        "types": "./dist/native/index.d.ts",
+        "default": "./dist/native/index.js"
+      },
+      "require": {
+        "types": "./dist/native/index.d.cts",
+        "default": "./dist/native/index.cjs"
+      }
+    },
+    "./vue": {
+      "import": {
+        "types": "./dist/vue/index.d.ts",
+        "default": "./dist/vue/index.js"
+      },
+      "require": {
+        "types": "./dist/vue/index.d.cts",
+        "default": "./dist/vue/index.cjs"
+      }
+    },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
+      "default": "./dist/svelte/index.js"
+    }
   },
   "bin": {
     "loading-regions-check": "./dist/cli.js"
@@ -71,39 +121,82 @@
     "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "**/*.svelte"
   ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests example scripts tsup.config.ts vitest.config.ts",
-    "build": "node scripts/clean.mjs && tsup && node scripts/copy-css.mjs",
+    "lint": "eslint src tests example examples scripts tsup.config.ts vitest.config.ts jest.native.config.cjs",
+    "build": "node scripts/clean.mjs && tsup && svelte-package -i src/svelte -o dist/svelte --tsconfig tsconfig.svelte.json && node scripts/copy-css.mjs",
     "dev": "vite example --host 127.0.0.1",
     "demo:build": "vite build example --outDir ../.local/demo-dist --emptyOutDir",
-    "check": "pnpm test && pnpm typecheck && pnpm lint && pnpm build && pnpm demo:build",
+    "check": "pnpm test && pnpm test:native && pnpm typecheck && pnpm lint && pnpm build && pnpm typecheck:examples && pnpm typecheck:svelte && pnpm demo:build && pnpm examples:build",
     "prepublishOnly": "pnpm check",
     "smoke:package": "node scripts/smoke-package.mjs",
-    "smoke:packed": "pnpm pack --pack-destination .local && node scripts/test-packed.mjs"
+    "smoke:packed": "pnpm pack --pack-destination .local && node scripts/test-packed.mjs && node scripts/test-adapters-packed.mjs",
+    "test:native": "jest --config jest.native.config.cjs --maxWorkers=2",
+    "typecheck:svelte": "svelte-check --tsconfig tsconfig.svelte.json",
+    "examples:build": "node scripts/build-examples.mjs",
+    "check:flutter": "cd packages/flutter && flutter pub get && flutter analyze && flutter test --concurrency=2 && cd example && flutter pub get && flutter analyze && flutter test --concurrency=2 && flutter build web",
+    "typecheck:examples": "tsc --noEmit -p tsconfig.examples.json"
   },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0",
-    "react-dom": "^18.3.0 || ^19.0.0"
+    "react-dom": "^18.3.0 || ^19.0.0",
+    "react-native": "^0.86.0",
+    "svelte": "^5.20.0",
+    "vue": "^3.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/jest-preset": "0.86.0",
+    "@sveltejs/package": "^2.5.8",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@testing-library/react": "^16.3.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "~29.5.14",
     "@types/node": "^22.19.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/react-test-renderer": "~19.1.0",
+    "@vue/server-renderer": "3.5.44",
+    "babel-jest": "~29.7.0",
     "eslint": "^10.12.0",
+    "expo": "57.0.28",
+    "jest": "~29.7.0",
     "jsdom": "^27.0.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "next": "16.4.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.0",
+    "react-test-renderer": "19.2.3",
+    "svelte": "5.57.2",
+    "svelte-check": "^4.7.6",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "vue": "3.5.44"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
   }
 }

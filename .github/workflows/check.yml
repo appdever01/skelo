@@ -24,3 +24,28 @@ jobs:
       - run: pnpm check
       - run: pnpm smoke:package
       - run: pnpm smoke:packed
+
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: flutter/flutter
+          ref: 3.44.2
+          path: .local/flutter-sdk
+      - run: .local/flutter-sdk/bin/flutter --version
+      - run: ../../.local/flutter-sdk/bin/flutter pub get
+        working-directory: packages/flutter
+      - run: ../../.local/flutter-sdk/bin/flutter analyze
+        working-directory: packages/flutter
+      - run: ../../.local/flutter-sdk/bin/flutter test --concurrency=2
+        working-directory: packages/flutter
+      - run: ../../../.local/flutter-sdk/bin/flutter pub get
+        working-directory: packages/flutter/example
+      - run: ../../../.local/flutter-sdk/bin/flutter analyze
+        working-directory: packages/flutter/example
+      - run: ../../../.local/flutter-sdk/bin/flutter test --concurrency=2
+        working-directory: packages/flutter/example
+      - run: ../../../.local/flutter-sdk/bin/flutter build web
+        working-directory: packages/flutter/example

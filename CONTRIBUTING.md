@@ -3,7 +3,9 @@
 Use Node 22.13 or newer and pnpm 11.7. Install with
 `pnpm install --frozen-lockfile`, then run `pnpm check` and
 `pnpm smoke:package` and `pnpm smoke:packed` before opening a pull request. Tests run with at most two
-workers. Start the local example with `pnpm dev`.
+workers. Flutter changes also require `pnpm check:flutter` with Flutter installed.
+The example applications under `examples/` are built by `pnpm check`.
+Start the local React example with `pnpm dev`.
 
 Keep resource bindings explicit, do not mount real pending content for
 measurement, and never report an incomplete or empty capture as a successful

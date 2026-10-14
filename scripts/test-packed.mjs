@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const archive = fileURLToPath(new URL('../.local/react-loading-regions-0.1.0.tgz', import.meta.url));
+const archive = fileURLToPath(new URL('../.local/react-loading-regions-0.2.0.tgz', import.meta.url));
 await access(archive);
 const smoke = new URL('./smoke-package.mjs', import.meta.url);
 const compiler = fileURLToPath(new URL('../node_modules/typescript/bin/tsc', import.meta.url));

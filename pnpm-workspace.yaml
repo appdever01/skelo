@@ -1,2 +1,11 @@
 allowBuilds:
   esbuild: true
+packages:
+  - examples/*
+overrides:
+  '@expo/cli': 57.0.29
+  '@expo/prebuild-config': 57.0.18
+  expo-asset: 57.0.19
+  expo-constants: 57.0.21
+  expo-modules-autolinking: 57.0.15
+  expo-modules-core: 57.0.22

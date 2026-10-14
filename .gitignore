@@ -18,3 +18,15 @@ setup.sh
 .env*
 !.env.example
 .DS_Store
+
+.next/
+.expo/
+.dart_tool/
+.flutter-plugins*
+build/
+pubspec.lock
+next-env.d.ts
+*.tsbuildinfo
+.svelte-kit/
+.idea/
+*.iml

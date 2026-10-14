@@ -35,7 +35,7 @@ export function isLayoutSnapshot(input: unknown): input is LayoutSnapshot {
   if (s.version !== 1 || !finite(s.width) || s.width < 0 || !finite(s.height) || s.height < 0 ||
       typeof s.complete !== 'boolean' || !finite(s.visited) || s.visited < 0 ||
       !finite(s.durationMs) || s.durationMs < 0 || !Array.isArray(s.bones)) return false;
-  if (s.reason !== undefined && !['max-depth', 'max-elements', 'max-time'].includes(s.reason)) return false;
+  if (s.reason !== undefined && !['max-depth', 'max-elements', 'max-time', 'measurement-unavailable'].includes(s.reason)) return false;
   if (s.complete && s.reason !== undefined) return false;
   return s.bones.every((bone: Bone) => bone && typeof bone.key === 'string' && bone.key.length > 0 &&
     finite(bone.x) && finite(bone.y) && finite(bone.width) && bone.width > 0 &&
@@ -64,10 +64,10 @@ export function compareLayouts(expected: LayoutSnapshot, actual: LayoutSnapshot,
   report.metrics.expectedBones = expected.bones.length;
   report.metrics.actualBones = actual.bones.length;
   if (!expected.complete || !actual.complete) {
-    issues.push({ code: 'INCOMPLETE_CAPTURE', severity: 'error', message: 'A scan reached its budget. Capture the full layout before comparing.' });
+    issues.push({ code: 'INCOMPLETE_CAPTURE', severity: 'error', message: 'Capture was incomplete or measurement was unavailable. Capture the full layout before comparing.' });
   }
   if (!expected.bones.length || !actual.bones.length || expected.width <= 0 || actual.width <= 0 || expected.height <= 0 || actual.height <= 0) {
-    issues.push({ code: 'NO_GEOMETRY', severity: 'error', message: 'Both states need visible, non-zero geometry. A DOM without layout cannot prove a match.' });
+    issues.push({ code: 'NO_GEOMETRY', severity: 'error', message: 'Both states need visible, non-zero geometry. Unavailable layout cannot prove a match.' });
   }
   if (Math.abs(expected.width - actual.width) > widthAllowed) {
     issues.push({ code: 'WIDTH_CHANGED', severity: 'error', message: 'Container width changed between states. Re-capture both at the same width.', deltaPx: Math.abs(expected.width - actual.width) });

@@ -10,6 +10,15 @@ import { LoadingRegion, pending, ready } from 'react-loading-regions';
 import { compareLayouts } from 'react-loading-regions/quality';
 
 const require = createRequire(import.meta.url);
+for (const name of ['index', 'next', 'quality/react']) {
+  const path = new URL(`./dist/${name}.js`, import.meta.resolve('react-loading-regions/package.json'));
+  assert.match(await readFile(path, 'utf8'), /^"use client";/);
+}
+const corePath = new URL('./dist/core/index.js', import.meta.resolve('react-loading-regions/package.json'));
+assert.doesNotMatch(await readFile(corePath, 'utf8'), /use client|from ["']react|document\./);
+const nativePath = new URL('./dist/native/index.js', import.meta.resolve('react-loading-regions/package.json'));
+assert.doesNotMatch(await readFile(nativePath, 'utf8'), /getBoundingClientRect|MutationObserver|react-dom|_reactInternals|findNodeHandle/);
+assert.equal((await import('react-loading-regions/core')).ready(0).data, 0);
 assert.equal(typeof require('react-loading-regions').LoadingRegion, 'function');
 assert.equal(typeof require('react-loading-regions/quality').captureLayout, 'function');
 assert.equal(typeof require('react-loading-regions/quality/react').QualityBoundary, 'function');

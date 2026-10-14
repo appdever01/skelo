@@ -1,0 +1,15 @@
+name: skelo
+version: 0.2.0
+description: Independent loading regions, skeletons and geometry checks for Flutter.
+repository: https://github.com/appdever01/skelo
+publish_to: none
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.27.0'
+dependencies:
+  flutter:
+    sdk: flutter
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
