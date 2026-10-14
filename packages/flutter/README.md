@@ -1,64 +1,109 @@
 # Skelo for Flutter
 
-Independent loading regions with retained content during refresh, region errors
-and retries, template skeletons and geometry comparisons. This is a Dart package;
-Skelo's npm package cannot be used by Flutter. This adapter is a preview.
+Show grey placeholders while your content loads.
 
-Install the preview:
+Skelo builds placeholder shapes from the widgets you mark in a sample layout. Each part of your screen can load separately, so a profile can appear while the activity feed is still loading.
+
+This Flutter package is a preview. Its skeletons are static; their colour and size can be changed.
+
+## Install
 
 ```sh
-flutter pub add skelo:0.2.0-preview.1
+flutter pub add skelo:0.2.0-preview.2
 ```
 
-```yaml
-dependencies:
-  skelo: 0.2.0-preview.1
-```
+## Start with one section
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:skelo/skelo.dart';
 
-Widget activityRegion(Resource<String> resource, VoidCallback retry) {
+Widget profile(bool loading, String name) {
   return LoadingRegion<String>(
-    resource: resource,
-    onRetry: retry,
-    onReport: (report) => debugPrint('${report.passed}'),
-    template: const Geometry(boneKey: 'activity', child: Text('Activity ready')),
-    builder: (context, value) => Geometry(boneKey: 'activity', child: Text(value)),
+    resource: loading
+        ? const Resource<String>.pending()
+        : Resource<String>.ready(name),
+    template: const Geometry(
+      boneKey: 'name',
+      child: Text('Example name'),
+    ),
+    builder: (context, value) => Geometry(
+      boneKey: 'name',
+      child: Text(value),
+    ),
   );
 }
 ```
 
-A complete widget example ships in `example/lib/main.dart`. The
-[repository README](https://github.com/appdever01/skelo#flutter) covers the other adapters.
+Your app supplies `loading` and `name`. While `loading` is true, Skelo shows the placeholder. When it becomes false, Skelo shows the name.
 
-`LoadingRegion<T>` accepts a `Resource<T>` and a lazy `builder`. Pending builders
-are never called. Refreshing and stale-error resources keep available children
-mounted. Retry and error widgets stay in their region. Use the separate
-`template` only for presentational fixtures without effects. Mark template and
-loaded boxes with matching `Geometry(boneKey: ...)` widgets. Unregistered content
-is outside the geometry check.
+| Part | What it does |
+| --- | --- |
+| `Resource.pending()` | Shows the loading placeholder. |
+| `Resource.ready(name)` | Shows the name when it is available. |
+| `template` | A sample layout used to create the skeleton. |
+| `Geometry` | Marks a widget that should become a placeholder shape. |
+| `boneKey` | Gives the shape a name. Match it in the sample and loaded content. |
 
-`onReport` enables quality capture and compares pending and loaded snapshots. `MeasuredLayout` exposes
-`onSnapshot` for controlled captures. Measurement uses public `RenderBox` APIs
-after a frame, with no widget-tree traversal. Invalid, partial, empty or missing
-measurements fail. `compareLayouts`, `LayoutSnapshot` and `Bone` are also usable
-from the pure Dart `package:skelo/core.dart` module. Coordinates are Flutter logical
-pixels. Comparisons are within a platform and container width, not across devices.
-Skeletons are static and exclude semantics, focus and pointer input. Reports
-compare geometry and do not certify accessibility.
+"Example name" is sample text for measuring the placeholder. Keep templates simple, with no requests or other actions. The first frame may show a plain block while the marked widgets are measured.
 
-Run `flutter pub get`, `flutter analyze`, and `flutter test --concurrency=2` from
-this folder. Shared JSON test fixtures ship in `test/fixtures`, so these checks
-work from the published archive without a repository checkout. The larger
-[repository example](https://github.com/appdever01/skelo/tree/main/examples/flutter)
-includes iOS, Android and web hosts, widget checks and a native integration test.
-Its web host compiles with `flutter build web`.
+## Change the grey colour
 
-Verified with Flutter 3.44.2 / Dart 3.12.2 using widget tests, web compilation
-and native integration tests on iOS 26.5 and Android 15 simulators. The native
-checks cover measured bounds, matching layouts, retained input identity and
-edits, local errors/retries and unavailable geometry rejection. Hardware devices
-and screen readers remain untested, so this adapter is a preview. MIT licence and preserved attribution are in
-`LICENSE` and `THIRD_PARTY_NOTICES.md`.
+Use `Skeleton` when you want your own placeholder:
+
+```dart
+const Skeleton(
+  color: Color(0xffd4d4d4),
+  minHeight: 80,
+  template: Geometry(
+    boneKey: 'name',
+    child: Text('Example name'),
+  ),
+)
+```
+
+Try `Color(0xffeeeeee)` for a lighter grey or `Color(0xffaaaaaa)` for a darker grey. `minHeight` reserves at least 80 logical pixels of space.
+
+To use this placeholder inside a `LoadingRegion`, pass it as `fallback`. The [Flutter API guide](https://github.com/appdever01/skelo/blob/main/packages/flutter/guides/api.md#skeleton-appearance) shows a complete example.
+
+## Control the shapes
+
+Wrap each widget you want turned into a placeholder in `Geometry`. To make a simpler skeleton, mark a larger group as one shape instead of marking every small widget.
+
+Use `radius` on `Geometry` to set rounded corners. Flutter uses the widgets you mark, so it has no HTML scan-depth setting. The web package's pulse and shimmer animations do not apply here.
+
+## Let each section load separately
+
+Give each `LoadingRegion` its own state:
+
+| State | What happens |
+| --- | --- |
+| `Resource.pending()` | Shows a placeholder. |
+| `Resource.ready(data)` | Shows the content. |
+| `Resource.refreshing(data)` | Keeps existing content visible while you fetch an update. |
+| `Resource.failed(error)` | Shows an error in that section. |
+| `Resource.stale(error, data)` | Shows the error alongside the existing content. |
+
+Use `onRetry` to connect the retry button to your request. Your app handles fetching the data.
+
+## Check whether the skeleton matches
+
+The optional `onReport` callback compares the marked placeholder shapes with the marked loaded content. It can report moved, resized or missing shapes. Incomplete or unavailable measurements cannot pass.
+
+These reports check layout. They do not certify accessibility or check widgets that you did not mark with `Geometry`.
+
+## Examples and guides
+
+A complete widget example ships in `example/lib/main.dart`. The detailed reference ships in `guides/api.md`.
+
+- [Flutter API guide](https://github.com/appdever01/skelo/blob/main/packages/flutter/guides/api.md): widgets, colour controls, measurements and the pure Dart core.
+- [Runnable Flutter app](https://github.com/appdever01/skelo/tree/main/examples/flutter): iOS, Android and web examples.
+- [Other frameworks](https://github.com/appdever01/skelo/blob/main/guides/frameworks.md): JavaScript adapters use the separate npm package.
+
+## Preview limits
+
+Widget tests, web builds and iOS/Android simulator workflows have passed with Flutter 3.44.2 / Dart 3.12.2. Hardware devices and screen readers remain untested, so this package remains a preview.
+
+## Licence
+
+[MIT](https://github.com/appdever01/skelo/blob/main/packages/flutter/LICENSE), with preserved [third-party notices](https://github.com/appdever01/skelo/blob/main/packages/flutter/THIRD_PARTY_NOTICES.md).

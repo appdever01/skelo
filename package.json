@@ -1,6 +1,6 @@
 {
   "name": "skelo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Independent loading regions, skeletons and layout checks for React, Next.js, React Native, Vue and Svelte.",
   "type": "module",
   "license": "MIT",
@@ -117,8 +117,10 @@
   },
   "files": [
     "dist",
+    "guides",
     "LICENSE",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md"
   ],
   "sideEffects": [
     "**/*.css",

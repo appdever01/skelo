@@ -1,440 +1,163 @@
 # Skelo
 
-Independent loading regions with automatic skeletons and layout checks.
+Show grey placeholders while your content loads.
 
-## Why Skelo is different
+Skelo can build a skeleton from a sample of your layout. You can change its colour and animation, and let different parts of a page load separately.
 
-Skelo combines independent loading regions with a quality checker for their
-skeletons. Each region can load, refresh or retry on its own, and its loading
-layout can be compared with the content that arrives.
+For example, a profile can appear while the activity feed is still loading.
 
-- Check the skeleton against the finished layout. Reports identify differences
-  in position, size and shape, along with overflow and missing elements.
-  Incomplete or unavailable measurements cannot pass.
-- Let each part of the interface finish on its own. A profile can stay usable
-  while an activity feed loads. Errors and retry controls stay within the
-  affected region.
-- Keep content mounted during refresh. A form can retain its edits while new
-  data loads. If a refresh fails and the resource retains its data, the region
-  shows the error alongside the existing content.
-- Generate skeletons from a separate template or saved geometry. Skelo never
-  mounts pending children or calls their render functions for measurement.
-  Templates must be free of side effects; saved geometry can also provide
-  skeletons during server rendering.
+## How it works
 
-Skelo has adapters for React, Next.js, Vue and Svelte, plus React Native/Expo
-and a separate Dart package for Flutter. The native and Flutter adapters have
-passed iOS and Android simulator checks and remain previews pending hardware
-and screen-reader checks. See the [platform support table](#platforms-and-installation) for
-verification details and limits.
+1. Give Skelo a sample of what the content will look like.
+2. While data is loading, Skelo uses that sample to draw grey placeholder shapes.
+3. When your app says the data is ready, Skelo shows the content.
 
-The npm package is named `skelo` and preserves the original React API.
-Flutter uses a separate `skelo` Dart package, released as `0.2.0-preview.1`.
+Your app handles the request. Skelo handles what appears while you wait.
 
-## Try it
+## Install
 
-Use Node 22.13 or newer and pnpm 11.7:
+For React, Next.js, Vue, Svelte or React Native:
 
 ```sh
-git clone https://github.com/appdever01/skelo.git
-cd skelo
-pnpm install --frozen-lockfile
-pnpm dev
+npm install skelo@0.2.1
 ```
 
-Open the HTTP address printed by Vite, normally `http://127.0.0.1:5173/`.
-The `examples/react/index.html` file is a source entry that needs the development
-server to compile and serve the React application.
+Flutter has a separate preview package:
 
-The local example has independent profile and activity requests, refresh and
-error controls, longer content, a right-to-left layout toggle and quality reports.
-All example data and requests are simulated. Each stack has its own folder in
-[examples/](examples/README.md).
+```sh
+flutter pub add skelo:0.2.0-preview.2
+```
 
-Install the JavaScript package with `npm install skelo@0.2.0` or
-`pnpm add skelo@0.2.0`. Import the CSS once in your web app.
+## Start with React
 
-For local package development, run `pnpm build` and
-`pnpm pack --pack-destination .local`, then install `.local/skelo-0.2.0.tgz`
-in a separate project.
-
-## Partial loading
-
-Each region receives its own resource. Pending regions show placeholders while
-ready regions remain usable. Refreshing regions keep their existing content.
-
-```tsx
-import { LoadingRegion, type Resource } from 'skelo';
+```jsx
+import { LoadingRegion, pending, ready } from 'skelo';
 import 'skelo/styles.css';
 
-function Profile({ name, bio }: {
-  name: Resource<string>;
-  bio: Resource<string>;
-}) {
+export function Profile({ loading, name }) {
   return (
-    <section>
-      <LoadingRegion id="name" resource={name} template={<h2>Alex Morgan</h2>}>
+    <div className="profile">
+      <LoadingRegion
+        resource={loading ? pending() : ready(name)}
+        template={<h2>Example name</h2>}
+        animation="shimmer"
+      >
         {value => <h2>{value}</h2>}
       </LoadingRegion>
-      <LoadingRegion id="bio" resource={bio} template={<p>Product designer in Lagos</p>}>
-        {value => <p>{value}</p>}
-      </LoadingRegion>
-    </section>
+    </div>
   );
 }
 ```
 
-Create resources with `pending()`, `ready(data)`, `refreshing(data)` or
-`failed(error, optionalExistingData)`. Ready values can include `0`, `false`,
-an empty string or `undefined`. The caller owns request cancellation and data
-retention; the library never saves user data globally or in browser storage.
+Here's what each part means:
 
-`fromQuery(query)` accepts the structural state returned by TanStack Query.
-`fromSWR(query)` accepts SWR's data, error and validation flags. Neither requires
-installing those libraries here.
-
-For shared bindings, wrap regions in `LoadingProvider resources={{ profile,
-activity }}` and use `needs="profile"` or `needs={['profile', 'activity']}`.
-Named bindings pass a record to the render function, such as `data.profile`.
-Direct `resource` bindings preserve the data's TypeScript type. Unknown names
-throw a useful error.
-
-## Loading templates
-
-`template` is optional, representative markup used to reserve space and generate
-skeleton geometry. Keep it free of requests, subscriptions, portals and other
-side effects. It is mounted under an inert, visually hidden wrapper; real
-pending children and render functions are never mounted or invoked for scanning.
-
-Without a template or supplied `layout`, the initial placeholder is a simple
-block. Use `minHeight` to reserve useful space. With a template, the first frame
-uses a block until measurement is available. Pass a geometry-only `layout`
-snapshot for a skeleton available during server rendering.
-
-The skeleton respects reduced motion and forced colours. Set `animation` to
-`'pulse'`, `'shimmer'` or `'none'`. Set `--lr-base`, `--lr-highlight` and
-`--lr-radius` to theme it. Loading, refresh, error and retry labels are props,
-so your application can translate them.
-
-Element hints:
-
-| Attribute | Effect |
+| Part | What it does |
 | --- | --- |
-| `data-loading-key="name"` | Stable identity for geometry comparisons. Use unique keys in a region. |
-| `data-skeleton-ignore` | Skip the element and its descendants during scanning. |
-| `data-skeleton-shape="circle"` or `"rect"` | Treat the element as one shape. |
-| `data-skeleton-lines="3"` | Use an explicit text line count. |
+| `pending()` | Shows the loading placeholder. |
+| `ready(name)` | Shows the name when it is available. |
+| `template` | A sample layout used to create the skeleton. |
+| `animation="shimmer"` | Adds a moving highlight to the grey shapes. |
 
-Scans accept `maxDepth`, `maxElements`, `maxScanMs`, `minSize` and
-`ignoreSelectors`. Defaults are 16 levels, 500 visited elements, 16ms and a 2px
-minimum size. A budget is checked between elements, so it is a cooperative
-limit rather than a hard execution deadline. Incomplete scans use a simple
-placeholder and cannot pass a layout comparison.
+"Example name" is sample text for measuring the placeholder. Use a sample with similar styling and length to the content you expect.
 
-## Quality checker
+Keep templates simple. They should contain layout and sample content, without requests or other actions.
 
-Import development checks separately from the loading components:
+On the web, the sample is measured after the component appears. Until that measurement is ready, Skelo may show one plain grey block.
 
-```tsx
-import { QualityBoundary } from 'skelo/quality/react';
+## Change the grey colour
 
-<QualityBoundary onReport={report => console.log(report)}>
-  <Profile name={nameResource} bio={bioResource} />
-</QualityBoundary>
-```
+Add this to your app's CSS:
 
-The boundary captures pending regions, compares them after content arrives,
-and reports each completed load once. It also checks for hidden elements left
-in the keyboard tab order. It reports incomplete scans, missing or extra shapes,
-duplicate IDs or keys, overflow and differences in position, size or radius.
-Failed loads report that the loaded layout could not be checked.
-
-The default shape tolerance is 8px. Configure `tolerancePx`,
-`heightTolerancePx`, `widthTolerancePx`, `overflowTolerancePx`,
-`checkUnexpected` and `scan` through the boundary's `options` prop. Stable
-options are recommended. Disable the boundary or leave it out of production
-to avoid measurement work.
-
-These checks compare geometry. They are not a CLS measurement, an accessibility
-certification or an exhaustive visual comparison. Compare the same container
-width in both states and repeat the workflow at the widths, locales, font sizes
-and content lengths your app supports. Text is not stored in snapshots.
-Dynamic lists may need representative templates or an explicit `fallback`.
-
-For controlled measurements, import `captureLayout`, `compareLayouts`,
-`createQualityChecker` or `auditHiddenFocus` from `skelo/quality`.
-`createQualityChecker(root).capture()` stores pending captures and returns
-reports on later completion. Call `reset()` when switching scenarios. No
-observers or storage are started by the standalone checker.
-
-## Command-line check
-
-Save loading and loaded snapshots from `captureLayout(element)` as JSON, then:
-
-```sh
-loading-regions-check loading.json loaded.json --tolerance 8
-```
-
-The command outputs a JSON report. Exit code `0` means within tolerance,
-`1` means a mismatch or an uncomparable capture, and `2` means invalid input.
-Capturing genuine geometry requires a browser; this command only compares
-existing snapshots and never launches one.
-
-## Platforms and installation
-
-Install [Skelo from npm](https://www.npmjs.com/package/skelo):
-
-```sh
-npm install skelo@0.2.0
-```
-
-Install the framework itself in the consuming application. Framework peers are
-optional so a Vue or Svelte application does not need React, and a native
-application does not need React DOM. Import `skelo/styles.css`
-once for web adapters; native and Flutter adapters do not use it.
-
-| Platform | Import or package | Checked here | Remaining limits |
-| --- | --- | --- | --- |
-| React 18.3 and 19 | `skelo` | Packed consumers, types, SSR, loading transitions | Browser smoke checks cover desktop examples, not every layout |
-| Next.js 16.4 App Router | `skelo/next` | Production build, server/client boundaries, SSR, hydration and browser interactions | Other Next.js versions and routers are unverified |
-| Vue 3.5 | `skelo/vue` | Slots, SSR, transitions, production build and browser interactions | Nuxt integration is unverified |
-| Svelte 5 | `skelo/svelte` | Snippets, transitions, declarations, production build and browser interactions | SvelteKit route integration is unverified; Svelte 4 is unsupported |
-| React Native 0.86.3 / Expo SDK 57 | `skelo/native` | Component tests, Metro exports and Expo Go simulator flows on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
-| Flutter | `skelo: 0.2.0-preview.1` on pub.dev | Flutter 3.44.2 / Dart 3.12.2, widget/web checks and native integration on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
-
-### Next.js
-
-The `/next` entry preserves `"use client"` in the built package. Server
-Components can import resource helpers from `/core`; they must not call helpers
-exported from a client entry on the server. Put state, event handlers and render
-callbacks inside your own Client Component:
-
-```tsx
-'use client';
-import { useState } from 'react';
-import { LoadingRegion, QualityBoundary } from 'skelo/next';
-import { ready, refreshing, type Resource } from 'skelo/core';
-
-export default function Profile({ initialName }: { initialName: string }) {
-  const [name, setName] = useState<Resource<string>>(ready(initialName));
-  return <QualityBoundary onReport={console.log}>
-    <LoadingRegion id="profile" resource={name} template={<p>Alex</p>}>
-      {value => <p>{value}</p>}
-    </LoadingRegion>
-    <button onClick={() => setName(refreshing(initialName))}>Refresh</button>
-  </QualityBoundary>;
+```css
+.profile .lr-skeleton {
+  --lr-base: #d4d4d4;
+  --lr-highlight: #ffffff80;
 }
 ```
 
-Import the CSS in `app/layout.tsx`. Pass serializable initial data from the
-Server Component, with the same resource state for SSR and initial hydration.
-A pending resource never invokes its client render callback. Server Components
-passed as children are evaluated by Next.js on the server, so use a client
-callback when content must wait for client data. DOM measurement starts after
-mount; supplied geometry can render skeletons on the server.
+`--lr-base` controls the skeleton colour. Try `#eeeeee` for a lighter grey or `#aaaaaa` for a darker grey.
 
-Run `pnpm --dir examples/next dev`. The example includes a Server Component
-importing `/core`, direct client boundaries with ready and pending resources,
-and a client island with independent loading, refresh, retry and quality checks.
-See [Next.js server and client components](https://nextjs.org/docs/app/getting-started/server-and-client-components).
+`--lr-highlight` controls the moving shimmer highlight.
 
-### React Native and Expo
+## Choose an animation
 
-```tsx
-import { Text } from 'react-native';
-import { Geometry, LoadingRegion, type Resource } from 'skelo/native';
+| Setting | Appearance |
+| --- | --- |
+| `animation="pulse"` | Fades in and out. This is the default. |
+| `animation="shimmer"` | A highlight moves across the skeleton. |
+| `animation="none"` | Stays still. |
 
-export function Activity({ resource, retry }: { resource: Resource<string>; retry: () => void }) {
-  return <LoadingRegion id="activity" resource={resource} onRetry={retry}
-    onReport={console.log}
-    template={<Geometry boneKey="activity"><Text>Activity ready</Text></Geometry>}>
-    {value => <Geometry boneKey="activity"><Text>{value}</Text></Geometry>}
-  </LoadingRegion>;
-}
-```
+Animations stop when someone's device is set to reduce motion.
 
-`Geometry` registers a non-collapsing native `View`. Match its `boneKey`,
-`radius` and `kind` between the template and loaded content. The adapter
-measures registered host views with `measureInWindow`, after layout. It never
-scans a DOM, traverses React internals or mounts the real pending children.
-Nested measured layouts and regions have separate registries.
+## Control depth and shapes
 
-A separate, presentational `template` generates shapes automatically. Supplied
-`layout` snapshots also work. Templates must have no effects or interactive
-controls. Skeletons disable touch and hide their descendants from native
-accessibility; error and retry controls remain available. Native skeletons are
-static and use a configurable `color`. Labels are customizable.
+The web depth setting is `scan={{ maxDepth: 16 }}` by default.
 
-`onReport` enables quality capture and compares registered loading and loaded
-geometry for that region. Coordinates use native layout units; compare states
-within the same platform and viewport.
-For controlled captures, use `MeasuredLayout onSnapshot={...}` with `Geometry`
-children, or `captureNativeLayout(rootRef.current, targets)`. Missing, zero-sized
-or timed-out measurements produce an incomplete snapshot. The default callback
-timeout is 100ms. No native accessibility audit is implied by a geometry pass.
-Mark every shape you want compared; unregistered content is outside the check.
-Use `combineResources` from `/core` if a region needs several resources.
+Depth means how far Skelo looks inside nested HTML elements. It is a limit on that check. If the limit prevents Skelo from finishing, it uses one plain placeholder.
 
-Run `pnpm --dir examples/expo start`, then open it in a compatible Expo Go or
-development build. `pnpm --dir examples/expo export` compiles both phone targets
-without launching a device. The adapter follows the documented
-[React Native measurement APIs](https://reactnative.dev/docs/the-new-architecture/layout-measurements)
-and [Expo SDK compatibility table](https://docs.expo.dev/versions/latest/).
+To deliberately make a skeleton simpler, change the sample layout or use these attributes on its elements:
 
-### Vue 3.5
+| What you want | What to use |
+| --- | --- |
+| Leave an element out | `data-skeleton-ignore` |
+| Represent a whole group as one block | `data-skeleton-shape="rect"` |
+| Use a circular placeholder | `data-skeleton-shape="circle"` |
+| Use three placeholder text lines | `data-skeleton-lines="3"` |
 
-```vue
-<script setup lang="ts">
-import { shallowRef } from 'vue';
-import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'skelo/vue';
-import 'skelo/styles.css';
-const activity = shallowRef<Resource<string>>(pending());
-const retry = () => { activity.value = ready('Activity ready'); };
-</script>
+You can also set `minHeight={80}` to reserve at least 80 pixels of space while loading.
 
-<template>
-  <QualityBoundary :on-report="console.log">
-    <LoadingRegion id="activity" :resource="activity" :on-retry="retry">
-      <template #template><p data-loading-key="activity">Activity ready</p></template>
-      <template #default="{ data }"><p data-loading-key="activity">{{ data }}</p></template>
-    </LoadingRegion>
-  </QualityBoundary>
-  <button @click="retry">Load activity</button>
-</template>
-```
+## Let each section load separately
 
-The default slot receives `{ data }` and runs only when data is available.
-Optional `template`, `fallback` and `error` slots are lazy; the error slot receives
-`{ error }`. `layout`, `scan`, `animation`, `minHeight` and the four labels work
-like the React props. Vue templates are inert. `QualityBoundary` uses the shared
-DOM checker and accepts `options` and `enabled`. Run
-`pnpm --dir examples/vue dev`. The adapter uses Vue's public
-[render functions](https://vuejs.org/api/render-function.html) and lifecycle hooks.
+Wrap each section in its own `LoadingRegion` and give it its own state.
 
-### Svelte 5
+| State | What happens |
+| --- | --- |
+| `pending()` | Shows a placeholder. |
+| `ready(data)` | Shows the content. |
+| `refreshing(data)` | Keeps existing content visible while you fetch an update. |
+| `failed(error)` | Shows an error in that section. |
 
-```svelte
-<script lang="ts">
-  import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'skelo/svelte';
-  import 'skelo/styles.css';
-  let activity = $state<Resource<string>>(pending());
-  const retry = () => { activity = ready('Activity ready'); };
-</script>
+Use `onRetry` to connect the retry button to your request.
 
-<QualityBoundary onReport={console.log}>
-  <LoadingRegion id="activity" resource={activity} onRetry={retry}>
-    {#snippet template()}<p data-loading-key="activity">Activity ready</p>{/snippet}
-    {#snippet children(value)}<p data-loading-key="activity">{value}</p>{/snippet}
-  </LoadingRegion>
-</QualityBoundary>
-<button onclick={retry}>Load activity</button>
-```
+This means an activity-feed error can stay inside the feed while the profile remains usable.
 
-Svelte 5.20 or newer is required. The adapter ships `.svelte` components and
-public declarations through the `svelte` export condition. `children` is a lazy
-snippet with the resource value; `template`, `fallback` and `errorFallback` are
-optional snippets. `errorFallback` receives the error. It uses the same DOM
-capture, inert templates, CSS and quality options as the other web adapters.
-Run `pnpm --dir examples/svelte dev`. See
-[Svelte snippets](https://svelte.dev/docs/svelte/snippet) and
-[package exports](https://svelte.dev/docs/kit/packaging).
+If you only need a placeholder, you can use the exported `Skeleton` component directly.
 
-### Flutter
+## Check whether the skeleton matches
 
-Install the separate [Flutter preview from pub.dev](https://pub.dev/packages/skelo):
+Skelo also has an optional checker for development.
 
-```sh
-flutter pub add skelo:0.2.0-preview.1
-```
+It compares the placeholder's layout with the finished content and reports differences in size or position, missing shapes and overflow. A measurement that could not finish cannot pass.
 
-Or add the exact preview to your `pubspec.yaml`:
+These reports help check the layout. They do not prove that the whole interface is accessible or looks correct on every screen.
 
-```yaml
-dependencies:
-  skelo: 0.2.0-preview.1
-```
+## Supported frameworks
 
-```dart
-import 'package:flutter/material.dart';
-import 'package:skelo/skelo.dart';
+| Framework | Package entry |
+| --- | --- |
+| React 18.3 or 19 | `skelo` |
+| Next.js 16.4 App Router | `skelo/next` |
+| Vue 3.5 | `skelo/vue` |
+| Svelte 5.20 or newer | `skelo/svelte` |
+| React Native 0.86.3 / Expo 57 | `skelo/native` |
+| Flutter | Separate `skelo` package on pub.dev |
 
-Widget activityRegion(Resource<String> resource, VoidCallback retry) {
-  return LoadingRegion<String>(
-    id: 'activity',
-    resource: resource,
-    onRetry: retry,
-    onReport: (report) => debugPrint('${report.passed}'),
-    template: const Geometry(boneKey: 'activity', child: Text('Activity ready')),
-    builder: (context, value) => Geometry(boneKey: 'activity', child: Text(value)),
-  );
-}
-```
+The examples above use React on the web. Other frameworks have their own examples.
 
-Use `Resource.pending()`, `Resource.ready(value)`, `Resource.refreshing(value)`,
-`Resource.failed(error)` or `Resource.stale(error, value)`. Nullable ready values
-remain available. The application owns fetching and data retention.
+React Native and Flutter use explicitly marked shapes rather than scanning HTML. Their skeletons are static and have a colour option. Both remain previews: iOS and Android simulator checks have passed, while hardware and screen-reader checks are still pending.
 
-The Dart `package:skelo/core.dart` entry has no Flutter dependency. It reads the same version 1
-snapshot format and is tested against the same comparison fixtures as the
-TypeScript core. Widgets register `Geometry` boxes and capture public
-`RenderBox` sizes and `localToGlobal` coordinates after the frame. Missing or
-zero-size boxes cannot pass. `MeasuredLayout` supports controlled captures;
-`onReport` compares each region's pending and loaded states. The builder stays
-uninvoked while pending, and refreshes retain the child element. Skeletons
-exclude focus, semantics and pointer input. Like native skeletons, they are static.
-Only registered geometry is checked, and geometry reports do not audit semantics.
+See the [framework examples](https://github.com/appdever01/skelo/tree/main/examples). Nuxt, SvelteKit routes and broader responsive checks remain unverified.
 
-Run `cd examples/flutter`, `flutter pub get`, then
-`flutter run -d <device-id>`. The example includes iOS, Android and web hosts;
-its [README](examples/flutter/README.md) describes simulator checks. See the
-[Flutter package README](packages/flutter/README.md),
-[RenderBox API](https://api.flutter.dev/flutter/rendering/RenderBox/localToGlobal.html)
-and [frame callbacks](https://api.flutter.dev/flutter/widgets/WidgetsBinding/addPostFrameCallback.html).
+## More guides
 
-## Verification and limits
+- [React API](https://github.com/appdever01/skelo/blob/main/guides/react.md): loading states, providers, templates and customisation.
+- [Framework guides](https://github.com/appdever01/skelo/blob/main/guides/frameworks.md): Next.js, Vue, Svelte, React Native/Expo and Flutter.
+- [Layout checks and CLI](https://github.com/appdever01/skelo/blob/main/guides/quality.md): comparison options and reports.
+- [Development and limits](https://github.com/appdever01/skelo/blob/main/guides/development.md): running the examples, checks and verification limits.
+- [Flutter API](https://github.com/appdever01/skelo/blob/main/packages/flutter/guides/api.md): Dart widgets, colour controls and marked shapes.
 
-```sh
-pnpm check
-pnpm smoke:package
-pnpm smoke:packed
-pnpm check:flutter
-```
-
-JavaScript tests cover independent regions, retained content, scoped errors and
-retries, lazy pending content, SSR/hydration, scan budgets, measurement failures,
-observer cleanup and comparison failures. Test workers are capped at two.
-`pnpm check` also builds the Next.js, Vue and Svelte examples and exports the
-Expo example for iOS and Android. Flutter checks run separately and require
-Flutter installed; they include the package and example widget workflows.
-
-Desktop browser checks exercised the Next.js production server and the Vue and
-Svelte examples: independent loading, matching layouts, retained profile edits,
-local errors and retry. Next.js produced no hydration warnings. A shared web
-margin-containment fix was verified in these examples. DOM unit tests use jsdom
-and cannot prove browser geometry on their own.
-
-Expo Go 57.0.9 and Flutter 3.44.2 were also tested on an iPhone 17 Pro simulator
-running iOS 26.5 and an Android 15 / API 35 emulator. Both adapters captured a
-registered box at `8,8` with size `160×32`, reported matching loading/loaded
-geometry, retained profile edits during refresh, kept errors and retries within
-the activity region, and rejected unavailable measurements. Expo uses a
-[Maestro flow](examples/expo/.maestro/native.yaml); Flutter uses a real-engine
-[integration test](examples/flutter/integration_test/native_test.dart) that also
-asserts retained input element identity.
-
-Native test-renderer checks mock host measurement, and Metro exports only prove
-bundle compatibility. The simulator checks above exercise native measurement.
-Hardware devices, VoiceOver, TalkBack, responsive layouts and broad visual
-audits remain unverified, so the native and Flutter adapters remain previews.
-
-Named providers remain part of the React API. Other adapters receive direct
-resources, with `combineResources` available to JavaScript consumers. There is
-no automatic inference of data dependencies, route capture, screenshot
-comparison or virtualized-list support. Web layouts with transforms, clipping,
-closed shadow roots or portals need application-specific checks. Web wrappers
-are `div` elements and must be used where that markup is valid. Native and Flutter use their own rendering and accessibility properties.
+The JavaScript guides are also included in the npm package's `guides/` folder.
 
 ## Licence
 
-[MIT](LICENSE). Third-party licences are included in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+[MIT](https://github.com/appdever01/skelo/blob/main/LICENSE), with preserved [third-party notices](https://github.com/appdever01/skelo/blob/main/THIRD_PARTY_NOTICES.md).

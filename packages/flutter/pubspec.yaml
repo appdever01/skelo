@@ -1,5 +1,5 @@
 name: skelo
-version: 0.2.0-preview.1
+version: 0.2.0-preview.2
 description: Independent loading regions, skeletons and geometry checks for Flutter. Preview with retained refresh content and scoped retries.
 repository: https://github.com/appdever01/skelo
 environment:
