@@ -1,0 +1,14 @@
+.lr-skeleton { position: relative; width: 100%; isolation: isolate; overflow: hidden; }
+.lr-template { opacity: 0; pointer-events: none; user-select: none; }
+.lr-overlay { position: absolute; inset: 0; pointer-events: none; }
+.lr-bone { display: block; position: absolute; background: var(--lr-base, #dde1e5); overflow: hidden; }
+.lr-fallback { inset: 0; border-radius: var(--lr-radius, 6px); }
+.lr-pulse { animation: lr-pulse 1.8s ease-in-out infinite; }
+.lr-shimmer::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, var(--lr-highlight, #ffffff80) 50%, transparent 80%); transform: translateX(-100%); animation: lr-shimmer 1.8s ease-in-out infinite; }
+.lr-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.lr-error { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+@keyframes lr-pulse { 50% { opacity: .55; } }
+@keyframes lr-shimmer { to { transform: translateX(100%); } }
+@media (prefers-color-scheme: dark) { .lr-skeleton { --lr-base: #343a43; --lr-highlight: #ffffff1f; } }
+@media (prefers-reduced-motion: reduce) { .lr-bone, .lr-bone::after { animation: none; } }
+@media (forced-colors: active) { .lr-bone { background: GrayText; } }

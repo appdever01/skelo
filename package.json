@@ -1,0 +1,109 @@
+{
+  "name": "react-loading-regions",
+  "version": "0.1.0",
+  "description": "Independent React loading regions, automatic skeletons and a layout quality checker.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Naheem Adisa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appdever01/react-loading-regions.git"
+  },
+  "homepage": "https://github.com/appdever01/react-loading-regions#readme",
+  "bugs": {
+    "url": "https://github.com/appdever01/react-loading-regions/issues"
+  },
+  "keywords": [
+    "react",
+    "skeleton",
+    "partial-loading",
+    "loading",
+    "accessibility",
+    "layout"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.7.0",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./quality": {
+      "import": {
+        "types": "./dist/quality/index.d.ts",
+        "default": "./dist/quality/index.js"
+      },
+      "require": {
+        "types": "./dist/quality/index.d.cts",
+        "default": "./dist/quality/index.cjs"
+      }
+    },
+    "./quality/react": {
+      "import": {
+        "types": "./dist/quality/react.d.ts",
+        "default": "./dist/quality/react.js"
+      },
+      "require": {
+        "types": "./dist/quality/react.d.cts",
+        "default": "./dist/quality/react.cjs"
+      }
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "loading-regions-check": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests example scripts tsup.config.ts vitest.config.ts",
+    "build": "node scripts/clean.mjs && tsup && node scripts/copy-css.mjs",
+    "dev": "vite example --host 127.0.0.1",
+    "demo:build": "vite build example --outDir ../.local/demo-dist --emptyOutDir",
+    "check": "pnpm test && pnpm typecheck && pnpm lint && pnpm build && pnpm demo:build",
+    "prepublishOnly": "pnpm check",
+    "smoke:package": "node scripts/smoke-package.mjs",
+    "smoke:packed": "pnpm pack --pack-destination .local && node scripts/test-packed.mjs"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^10.12.0",
+    "jsdom": "^27.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.1.6"
+  }
+}
