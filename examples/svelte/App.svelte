@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { LoadingRegion, QualityBoundary, pending, ready, refreshing, failed, type Resource, type QualityReport } from 'react-loading-regions/svelte';
+  import { LoadingRegion, QualityBoundary, pending, ready, refreshing, failed, type Resource, type QualityReport } from 'skelo/svelte';
   let profile = $state<Resource<string>>(ready('Alex'));
   let activity = $state<Resource<string>>(pending());
   let report = $state<QualityReport>();

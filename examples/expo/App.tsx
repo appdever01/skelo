@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, Button, TextInput, ScrollView } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Geometry, LoadingRegion, MeasuredLayout, captureNativeLayout, compareLayouts,
-  ready, pending, refreshing, failed, type LayoutSnapshot, type Resource, type QualityReport } from 'react-loading-regions/native';
+  ready, pending, refreshing, failed, type LayoutSnapshot, type Resource, type QualityReport } from 'skelo/native';
 
 const activityBox = { width: 180, height: 32, borderRadius: 4 };
 

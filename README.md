@@ -28,8 +28,8 @@ passed iOS and Android simulator checks and remain previews pending hardware
 and screen-reader checks. See the [platform support table](#platforms-and-installation) for
 verification details and limits.
 
-Neither package is published yet. The JavaScript package keeps its existing
-name, `react-loading-regions`, and its original React API.
+The npm package is named `skelo` and preserves the original React API.
+Flutter uses a separate `skelo` Dart package, released as `0.2.0-preview.1`.
 
 ## Try it
 
@@ -51,15 +51,12 @@ error controls, longer content, a right-to-left layout toggle and quality report
 All example data and requests are simulated. Each stack has its own folder in
 [examples/](examples/README.md).
 
-To install the built package in another project:
+Install the JavaScript package with `npm install skelo@0.2.0` or
+`pnpm add skelo@0.2.0`. Import the CSS once in your web app.
 
-```sh
-pnpm build
-pnpm pack --pack-destination .local
-```
-
-Install the resulting `.local/react-loading-regions-0.2.0.tgz` with your project's
-package manager. Import the CSS once in your app.
+For local package development, run `pnpm build` and
+`pnpm pack --pack-destination .local`, then install `.local/skelo-0.2.0.tgz`
+in a separate project.
 
 ## Partial loading
 
@@ -67,8 +64,8 @@ Each region receives its own resource. Pending regions show placeholders while
 ready regions remain usable. Refreshing regions keep their existing content.
 
 ```tsx
-import { LoadingRegion, type Resource } from 'react-loading-regions';
-import 'react-loading-regions/styles.css';
+import { LoadingRegion, type Resource } from 'skelo';
+import 'skelo/styles.css';
 
 function Profile({ name, bio }: {
   name: Resource<string>;
@@ -139,7 +136,7 @@ placeholder and cannot pass a layout comparison.
 Import development checks separately from the loading components:
 
 ```tsx
-import { QualityBoundary } from 'react-loading-regions/quality/react';
+import { QualityBoundary } from 'skelo/quality/react';
 
 <QualityBoundary onReport={report => console.log(report)}>
   <Profile name={nameResource} bio={bioResource} />
@@ -165,7 +162,7 @@ and content lengths your app supports. Text is not stored in snapshots.
 Dynamic lists may need representative templates or an explicit `fallback`.
 
 For controlled measurements, import `captureLayout`, `compareLayouts`,
-`createQualityChecker` or `auditHiddenFocus` from `react-loading-regions/quality`.
+`createQualityChecker` or `auditHiddenFocus` from `skelo/quality`.
 `createQualityChecker(root).capture()` stores pending captures and returns
 reports on later completion. Call `reset()` when switching scenarios. No
 observers or storage are started by the standalone checker.
@@ -185,26 +182,25 @@ existing snapshots and never launches one.
 
 ## Platforms and installation
 
-Build and pack this checkout with `pnpm build` and
-`pnpm pack --pack-destination .local`. In another JavaScript project, run:
+Install [Skelo from npm](https://www.npmjs.com/package/skelo):
 
 ```sh
-pnpm add /absolute/path/to/skelo/.local/react-loading-regions-0.2.0.tgz
+npm install skelo@0.2.0
 ```
 
 Install the framework itself in the consuming application. Framework peers are
 optional so a Vue or Svelte application does not need React, and a native
-application does not need React DOM. Import `react-loading-regions/styles.css`
+application does not need React DOM. Import `skelo/styles.css`
 once for web adapters; native and Flutter adapters do not use it.
 
 | Platform | Import or package | Checked here | Remaining limits |
 | --- | --- | --- | --- |
-| React 18.3 and 19 | `react-loading-regions` | Packed consumers, types, SSR, loading transitions | Browser smoke checks cover desktop examples, not every layout |
-| Next.js 16.4 App Router | `react-loading-regions/next` | Production build, server/client boundaries, SSR, hydration and browser interactions | Other Next.js versions and routers are unverified |
-| Vue 3.5 | `react-loading-regions/vue` | Slots, SSR, transitions, production build and browser interactions | Nuxt integration is unverified |
-| Svelte 5 | `react-loading-regions/svelte` | Snippets, transitions, declarations, production build and browser interactions | SvelteKit route integration is unverified; Svelte 4 is unsupported |
-| React Native 0.86.3 / Expo SDK 57 | `react-loading-regions/native` | Component tests, Metro exports and Expo Go simulator flows on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
-| Flutter | Dart package in `packages/flutter` | Flutter 3.44.2 / Dart 3.12.2, widget/web checks and native integration on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
+| React 18.3 and 19 | `skelo` | Packed consumers, types, SSR, loading transitions | Browser smoke checks cover desktop examples, not every layout |
+| Next.js 16.4 App Router | `skelo/next` | Production build, server/client boundaries, SSR, hydration and browser interactions | Other Next.js versions and routers are unverified |
+| Vue 3.5 | `skelo/vue` | Slots, SSR, transitions, production build and browser interactions | Nuxt integration is unverified |
+| Svelte 5 | `skelo/svelte` | Snippets, transitions, declarations, production build and browser interactions | SvelteKit route integration is unverified; Svelte 4 is unsupported |
+| React Native 0.86.3 / Expo SDK 57 | `skelo/native` | Component tests, Metro exports and Expo Go simulator flows on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
+| Flutter | `skelo: 0.2.0-preview.1` on pub.dev | Flutter 3.44.2 / Dart 3.12.2, widget/web checks and native integration on iOS 26.5 / Android 15 | Preview: simulator verified; hardware and screen readers pending |
 
 ### Next.js
 
@@ -216,8 +212,8 @@ callbacks inside your own Client Component:
 ```tsx
 'use client';
 import { useState } from 'react';
-import { LoadingRegion, QualityBoundary } from 'react-loading-regions/next';
-import { ready, refreshing, type Resource } from 'react-loading-regions/core';
+import { LoadingRegion, QualityBoundary } from 'skelo/next';
+import { ready, refreshing, type Resource } from 'skelo/core';
 
 export default function Profile({ initialName }: { initialName: string }) {
   const [name, setName] = useState<Resource<string>>(ready(initialName));
@@ -246,7 +242,7 @@ See [Next.js server and client components](https://nextjs.org/docs/app/getting-s
 
 ```tsx
 import { Text } from 'react-native';
-import { Geometry, LoadingRegion, type Resource } from 'react-loading-regions/native';
+import { Geometry, LoadingRegion, type Resource } from 'skelo/native';
 
 export function Activity({ resource, retry }: { resource: Resource<string>; retry: () => void }) {
   return <LoadingRegion id="activity" resource={resource} onRetry={retry}
@@ -290,8 +286,8 @@ and [Expo SDK compatibility table](https://docs.expo.dev/versions/latest/).
 ```vue
 <script setup lang="ts">
 import { shallowRef } from 'vue';
-import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'react-loading-regions/vue';
-import 'react-loading-regions/styles.css';
+import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'skelo/vue';
+import 'skelo/styles.css';
 const activity = shallowRef<Resource<string>>(pending());
 const retry = () => { activity.value = ready('Activity ready'); };
 </script>
@@ -319,8 +315,8 @@ DOM checker and accepts `options` and `enabled`. Run
 
 ```svelte
 <script lang="ts">
-  import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'react-loading-regions/svelte';
-  import 'react-loading-regions/styles.css';
+  import { LoadingRegion, QualityBoundary, pending, ready, type Resource } from 'skelo/svelte';
+  import 'skelo/styles.css';
   let activity = $state<Resource<string>>(pending());
   const retry = () => { activity = ready('Activity ready'); };
 </script>
@@ -345,15 +341,17 @@ Run `pnpm --dir examples/svelte dev`. See
 
 ### Flutter
 
-Flutter uses Dart. Install the separate package from this repository, not npm:
+Install the separate [Flutter preview from pub.dev](https://pub.dev/packages/skelo):
+
+```sh
+flutter pub add skelo:0.2.0-preview.1
+```
+
+Or add the exact preview to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  skelo:
-    git:
-      url: https://github.com/appdever01/skelo.git
-      path: packages/flutter
-      ref: main
+  skelo: 0.2.0-preview.1
 ```
 
 ```dart

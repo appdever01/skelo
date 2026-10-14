@@ -1,6 +1,6 @@
 import { createApp, defineComponent, h, shallowRef } from 'vue';
-import { LoadingRegion, QualityBoundary, pending, ready, refreshing, failed, type Resource, type QualityReport } from 'react-loading-regions/vue';
-import 'react-loading-regions/styles.css';
+import { LoadingRegion, QualityBoundary, pending, ready, refreshing, failed, type Resource, type QualityReport } from 'skelo/vue';
+import 'skelo/styles.css';
 createApp(defineComponent({ setup() {
   const profile = shallowRef<Resource<string>>(ready('Alex'));
   const activity = shallowRef<Resource<string>>(pending());

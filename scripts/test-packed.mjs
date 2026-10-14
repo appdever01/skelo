@@ -1,28 +1,30 @@
 import assert from 'node:assert/strict';
-import { copyFile, mkdtemp, writeFile, rm, access } from 'node:fs/promises';
+import { copyFile, mkdtemp, writeFile, readFile, rm, access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const archive = fileURLToPath(new URL('../.local/react-loading-regions-0.2.0.tgz', import.meta.url));
-await access(archive);
+const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+const archive = fileURLToPath(new URL(`../.local/skelo-${version}.tgz`, import.meta.url));
+const packageSpec = process.env.SKELO_PACKAGE_SPEC ?? `file:${archive}`;
+if (!process.env.SKELO_PACKAGE_SPEC) await access(archive);
 const smoke = new URL('./smoke-package.mjs', import.meta.url);
 const compiler = fileURLToPath(new URL('../node_modules/typescript/bin/tsc', import.meta.url));
 const scratch = await mkdtemp(join(tmpdir(), 'loading-regions-consumer-'));
 try {
   await copyFile(smoke, join(scratch, 'smoke.mjs'));
-  await writeFile(join(scratch, 'consumer.tsx'), `import { LoadingProvider, LoadingRegion, ready, type Resource } from 'react-loading-regions';
-import { QualityBoundary } from 'react-loading-regions/quality/react';
-import { compareLayouts, type LayoutSnapshot } from 'react-loading-regions/quality';
+  await writeFile(join(scratch, 'consumer.tsx'), `import { LoadingProvider, LoadingRegion, ready, type Resource } from 'skelo';
+import { QualityBoundary } from 'skelo/quality/react';
+import { compareLayouts, type LayoutSnapshot } from 'skelo/quality';
 const name: Resource<string> = ready('Alex');
 export const direct = <LoadingRegion resource={name}>{value => <p>{value.toUpperCase()}</p>}</LoadingRegion>;
 export const shared = <LoadingProvider resources={{ name }}><LoadingRegion needs="name">{data => <p>{String(data.name)}</p>}</LoadingRegion></LoadingProvider>;
 export const checked = <QualityBoundary onReport={report => console.log(report.passed)}>{direct}</QualityBoundary>;
 export const check = (a: LayoutSnapshot, b: LayoutSnapshot) => compareLayouts(a, b);
 `);
-  await writeFile(join(scratch, 'consumer.cts'), `import { ready } from 'react-loading-regions';
-import { compareLayouts } from 'react-loading-regions/quality';
+  await writeFile(join(scratch, 'consumer.cts'), `import { ready } from 'skelo';
+import { compareLayouts } from 'skelo/quality';
 export const resource = ready(0);
 export const checker = compareLayouts;
 `);
@@ -35,7 +37,7 @@ export const checker = compareLayouts;
     await rm(join(scratch, 'node_modules'), { recursive: true, force: true });
     await rm(join(scratch, 'pnpm-lock.yaml'), { force: true });
     await writeFile(join(scratch, 'package.json'), JSON.stringify({ private: true, type: 'module',
-      dependencies: { 'react-loading-regions': `file:${archive}`, react: reactVersion, 'react-dom': reactVersion },
+      dependencies: { 'skelo': packageSpec, react: reactVersion, 'react-dom': reactVersion },
       devDependencies: { '@types/react': `^${major}.0.0`, '@types/react-dom': `^${major}.0.0` } }));
     execFileSync('pnpm', ['install', '--ignore-scripts', '--reporter=silent'], { cwd: scratch, stdio: 'pipe' });
     const output = execFileSync(process.execPath, [join(scratch, 'smoke.mjs')], { cwd: scratch, encoding: 'utf8' });

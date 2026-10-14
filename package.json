@@ -1,5 +1,5 @@
 {
-  "name": "react-loading-regions",
+  "name": "skelo",
   "version": "0.2.0",
   "description": "Independent loading regions, skeletons and layout checks for React, Next.js, React Native, Vue and Svelte.",
   "type": "module",
@@ -133,7 +133,7 @@
     "dev": "pnpm build && pnpm --dir examples/react dev",
     "demo:build": "pnpm --dir examples/react build",
     "check": "pnpm test && pnpm test:native && pnpm typecheck && pnpm lint && pnpm build && pnpm typecheck:examples && pnpm typecheck:svelte && pnpm demo:build && pnpm examples:build",
-    "prepublishOnly": "pnpm check",
+    "prepublishOnly": "pnpm check && pnpm smoke:package && pnpm smoke:packed",
     "smoke:package": "node scripts/smoke-package.mjs",
     "smoke:packed": "pnpm pack --pack-destination .local && node scripts/test-packed.mjs && node scripts/test-adapters-packed.mjs",
     "test:native": "jest --config jest.native.config.cjs --maxWorkers=2",

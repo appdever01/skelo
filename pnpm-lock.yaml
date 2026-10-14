@@ -118,15 +118,15 @@ importers:
       react:
         specifier: 19.2.3
         version: 19.2.3
-      react-loading-regions:
-        specifier: workspace:*
-        version: link:../..
       react-native:
         specifier: 0.86.3
         version: 0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.3.0)(react@19.2.3)
       react-native-safe-area-context:
         specifier: ~5.7.0
         version: 5.7.0(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.3.0)(react@19.2.3))(react@19.2.3)
+      skelo:
+        specifier: workspace:*
+        version: link:../..
 
   examples/next:
     dependencies:
@@ -139,7 +139,7 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
-      react-loading-regions:
+      skelo:
         specifier: workspace:*
         version: link:../..
 
@@ -151,13 +151,13 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
-      react-loading-regions:
+      skelo:
         specifier: workspace:*
         version: link:../..
 
   examples/svelte:
     dependencies:
-      react-loading-regions:
+      skelo:
         specifier: workspace:*
         version: link:../..
       svelte:
@@ -166,7 +166,7 @@ importers:
 
   examples/vue:
     dependencies:
-      react-loading-regions:
+      skelo:
         specifier: workspace:*
         version: link:../..
       vue:

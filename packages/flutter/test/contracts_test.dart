@@ -5,7 +5,7 @@ import 'package:skelo/skelo.dart';
 
 void main() {
   final fixtures =
-      jsonDecode(File('../../tests/fixtures/geometry.json').readAsStringSync())
+      jsonDecode(File('test/fixtures/geometry.json').readAsStringSync())
           as List;
   for (final fixture in fixtures) {
     test('shared geometry contract: ${fixture['name']}', () {

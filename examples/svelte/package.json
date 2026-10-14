@@ -1,1 +1,1 @@
-{"name":"skelo-svelte-example","private":true,"type":"module","scripts":{"dev":"vite --host 127.0.0.1 --port 3102","build":"vite build"},"dependencies":{"react-loading-regions":"workspace:*","svelte":"5.57.2"}}
+{"name":"skelo-svelte-example","private":true,"type":"module","scripts":{"dev":"vite --host 127.0.0.1 --port 3102","build":"vite build"},"dependencies":{"skelo":"workspace:*","svelte":"5.57.2"}}

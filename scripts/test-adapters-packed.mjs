@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, copyFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, copyFile, readFile, rm, mkdir } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const archive = join(root, '.local/react-loading-regions-0.2.0.tgz');
+const { version } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+const packageSpec = process.env.SKELO_PACKAGE_SPEC ?? `file:${join(root, `.local/skelo-${version}.tgz`)}`;
 const scratch = await mkdtemp(join(tmpdir(), 'skelo-adapters-'));
 const run = (command, args) => execFileSync(command, args, { cwd: scratch, stdio: 'pipe', env: { ...process.env, CI: '1' } });
 try {
@@ -14,7 +15,7 @@ try {
     await rm(join(scratch, 'node_modules'), { recursive: true, force: true });
     await rm(join(scratch, 'pnpm-lock.yaml'), { force: true });
     await writeFile(join(scratch, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: {
-      'react-loading-regions': `file:${archive}`, ...dependencies,
+      'skelo': packageSpec, ...dependencies,
     } }));
     run('pnpm', ['install', '--ignore-scripts', '--reporter=silent']);
   };
@@ -23,17 +24,28 @@ try {
 import { createRequire } from 'node:module';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { LoadingRegion } from 'react-loading-regions/vue';
-import { pending, ready, compareLayouts } from 'react-loading-regions/core';
+import { LoadingRegion } from 'skelo/vue';
+import { pending, ready, compareLayouts } from 'skelo/core';
 const require = createRequire(import.meta.url);
 assert.throws(() => require.resolve('react'));
-assert.equal(require('react-loading-regions/core').ready(0).data, 0);
+assert.equal(require('skelo/core').ready(0).data, 0);
 assert.equal(typeof compareLayouts, 'function');
 assert.match(await renderToString(createSSRApp({render: () => h(LoadingRegion, {resource:ready(0)}, {default: ({data}) => h('p', String(data))})})), />0</);
 await renderToString(createSSRApp({render: () => h(LoadingRegion, {resource:pending()}, {default: () => { throw new Error('Pending slot rendered'); }})}));
 `);
   run(process.execPath, ['vue.mjs']);
   console.log('Packed Vue SSR and core ESM/CommonJS imports passed without React installed.');
+  await install({ next: '16.4.0', react: '19.2.3', 'react-dom': '19.2.3', '@types/react': '^19.2.0', '@types/node': '^22.19.0', typescript: '^5.9.3' });
+  await mkdir(join(scratch, 'app'));
+  for (const file of ['app/page.tsx', 'app/layout.tsx', 'app/client-demo.tsx', 'next.config.mjs', 'tsconfig.json']) {
+    await copyFile(join(root, 'examples/next', file), join(scratch, file));
+  }
+  run('pnpm', ['exec', 'next', 'build', '--webpack']);
+  assert.match(await readFile(join(scratch, '.next/server/app/index.html'), 'utf8'), /Skelo/);
+  await rm(join(scratch, 'app'), { recursive: true, force: true });
+  await rm(join(scratch, '.next'), { recursive: true, force: true });
+  await rm(join(scratch, 'next.config.mjs'));
+  console.log('Packed Next.js production build and server/client entry points passed.');
   await install({ svelte: '5.57.2', vite: '^7.3.1', '@sveltejs/vite-plugin-svelte': '^6.2.4', 'svelte-check': '^4.7.6', typescript: '^5.9.3' });
   for (const file of ['App.svelte', 'main.ts', 'index.html', 'vite.config.ts']) await copyFile(join(root, 'examples/svelte', file), join(scratch, file));
   await writeFile(join(scratch, 'tsconfig.json'), JSON.stringify({ compilerOptions: { target: 'ES2022', module: 'ESNext', moduleResolution: 'Bundler', strict: true, skipLibCheck: false, allowJs: true }, include: ['App.svelte'] }));
@@ -43,7 +55,7 @@ await renderToString(createSSRApp({render: () => h(LoadingRegion, {resource:pend
   console.log('Packed Svelte consumer declarations and production build passed without React installed.');
   await install({ react: '19.2.3', 'react-native': '0.86.3', '@types/react': '^19.2.0', typescript: '^5.9.3' });
   await writeFile(join(scratch, 'native.tsx'), `import { Text } from 'react-native';
-import { LoadingRegion, Geometry, ready, captureNativeLayout } from 'react-loading-regions/native';
+import { LoadingRegion, Geometry, ready, captureNativeLayout } from 'skelo/native';
 export const region = <LoadingRegion resource={ready('Alex')} onReport={report => console.log(report.passed)}>{name => <Geometry boneKey="name"><Text>{name}</Text></Geometry>}</LoadingRegion>;
 export const measure = captureNativeLayout;
 `);

@@ -1,5 +1,5 @@
-import { LoadingRegion } from 'react-loading-regions/next';
-import { pending, ready } from 'react-loading-regions/core';
+import { LoadingRegion } from 'skelo/next';
+import { pending, ready } from 'skelo/core';
 import ClientDemo from './client-demo';
 export default function Page() {
   return <main><h1>Skelo in Next.js</h1>

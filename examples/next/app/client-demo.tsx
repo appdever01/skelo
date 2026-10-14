@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { LoadingRegion, QualityBoundary } from 'react-loading-regions/next';
-import { pending, ready, refreshing, failed, type Resource, type QualityReport } from 'react-loading-regions/core';
+import { LoadingRegion, QualityBoundary } from 'skelo/next';
+import { pending, ready, refreshing, failed, type Resource, type QualityReport } from 'skelo/core';
 export default function ClientDemo({ initialName }: { initialName: string }) {
   const [profile, setProfile] = useState<Resource<string>>(ready(initialName));
   const [activity, setActivity] = useState<Resource<string>>(pending());

@@ -7,7 +7,7 @@
     "build": "vite build --outDir ../../.local/demo-dist --emptyOutDir"
   },
   "dependencies": {
-    "react-loading-regions": "workspace:*",
+    "skelo": "workspace:*",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   }
