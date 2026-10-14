@@ -54,6 +54,13 @@ describe('bounded layout scanner with supplied geometry', () => {
     expect(() => captureLayout(root, { maxScanMs: Infinity })).toThrow();
     expect(() => captureLayout(root, { ignoreSelectors: ['['] })).toThrow();
   });
+  it('never emits zero-sized geometry when the minimum size is zero', () => {
+    const root = fixture('<img /><p>Collapsed text</p>');
+    for (const el of root.children) vi.mocked(el.getBoundingClientRect).mockReturnValue(box(0, 0));
+    const result = captureLayout(root, { minSize: 0, maxScanMs: 1000 });
+    expect(result.complete).toBe(true);
+    expect(result.bones).toEqual([]);
+  });
   it('does not expand a large sibling list before applying the element budget', () => {
     const root = document.createElement('div');
     root.innerHTML = '<span>Text</span>'.repeat(2000);

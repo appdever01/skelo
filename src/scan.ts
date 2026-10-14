@@ -85,7 +85,7 @@ export function captureLayout(root: HTMLElement, options: ScanOptions = {}): Lay
       if (reason === 'max-time') break;
     }
     if (isAtomic || (el.children.length === 0 && !el.shadowRoot?.children.length && textNodes.length === 0 && style.display !== 'contents')) {
-      if (box.width >= minSize && box.height >= minSize) {
+      if (box.width > 0 && box.height > 0 && box.width >= minSize && box.height >= minSize) {
         const radius = toRadius(style, box.width, box.height);
         bones.push({ key, x: box.left - rect.left, y: box.top - rect.top,
           width: box.width, height: box.height, radius,
@@ -103,15 +103,15 @@ export function captureLayout(root: HTMLElement, options: ScanOptions = {}): Lay
           if (typeof range.getClientRects === 'function') measured.push(...Array.from(range.getClientRects()));
         }
       }
-      measured = measured.filter(b => b.width >= minSize && b.height >= minSize);
+      measured = measured.filter(b => b.width > 0 && b.height > 0 && b.width >= minSize && b.height >= minSize);
       if (measured.length) {
         measured.forEach((b, i) => bones.push({ key: `${key}:text:${i}`, x: b.left - rect.left,
           y: b.top - rect.top, width: b.width, height: b.height, radius: 4, kind: 'rect' }));
-      } else if (box.width >= minSize && box.height >= minSize) {
+      } else if (box.width > 0 && box.height > 0 && box.width >= minSize && box.height >= minSize) {
         const lines = explicit ?? Math.min(100, Math.max(1, Math.round(box.height / lineHeight)));
         for (let i = 0; i < lines; i++) {
           const height = Math.min(lineHeight * 0.72, box.height - i * lineHeight);
-          if (height < minSize) break;
+          if (height <= 0 || height < minSize) break;
           bones.push({ key: `${key}:text:${i}`, x: box.left - rect.left, y: box.top - rect.top + i * lineHeight,
             width: box.width * (i === lines - 1 && lines > 1 ? 0.75 : 1), height, radius: 4, kind: 'rect' });
         }
